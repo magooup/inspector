@@ -301,7 +301,11 @@ export function useConnection({
         bearerToken || (await serverAuthProvider.tokens())?.access_token;
       if (token) {
         const authHeaderName = headerName || "Authorization";
-        headers[authHeaderName] = `Bearer ${token}`;
+        // 如果是OAuth token需要添加Bearer前缀，如果是手动提供的bearerToken则直接使用
+        const headerValue = bearerToken 
+          ? token 
+          : `Bearer ${token}`;
+        headers[authHeaderName] = headerValue;
       }
 
       const clientTransport = new SSEClientTransport(mcpProxyServerUrl, {

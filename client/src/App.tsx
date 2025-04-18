@@ -114,7 +114,7 @@ const App = () => {
     return DEFAULT_INSPECTOR_CONFIG;
   });
   const [bearerToken, setBearerToken] = useState<string>(() => {
-    return localStorage.getItem("lastBearerToken") || "";
+    return localStorage.getItem("lastHeaderValue") || "";
   });
 
   const [headerName, setHeaderName] = useState<string>(() => {
@@ -210,7 +210,7 @@ const App = () => {
   }, [transportType]);
 
   useEffect(() => {
-    localStorage.setItem("lastBearerToken", bearerToken);
+    localStorage.setItem("lastHeaderValue", bearerToken);
   }, [bearerToken]);
 
   useEffect(() => {

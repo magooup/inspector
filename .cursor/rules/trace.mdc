@@ -1,0 +1,6 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+- 排查问题时不用检查服务状态，不用测试连接

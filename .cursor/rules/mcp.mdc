@@ -1,0 +1,10 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+
+# Your rule content
+
+- 这是一个MCP Server 测试工具，MCP = Model Context Protocol 
+- 你要来帮助我构建一个适合通用的MCP Server的测试工具

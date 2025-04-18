@@ -92,7 +92,7 @@ const Sidebar = ({
 }: SidebarProps) => {
   const [theme, setTheme] = useTheme();
   const [showEnvVars, setShowEnvVars] = useState(false);
-  const [showBearerToken, setShowBearerToken] = useState(false);
+  const [showHeaders, setShowHeaders] = useState(false);
   const [showConfig, setShowConfig] = useState(false);
   const [shownEnvVars, setShownEnvVars] = useState<Set<string>>(new Set());
 
@@ -178,19 +178,19 @@ const Sidebar = ({
               <div className="space-y-2">
                 <Button
                   variant="outline"
-                  onClick={() => setShowBearerToken(!showBearerToken)}
+                  onClick={() => setShowHeaders(!showHeaders)}
                   className="flex items-center w-full"
-                  data-testid="auth-button"
-                  aria-expanded={showBearerToken}
+                  data-testid="headers-button"
+                  aria-expanded={showHeaders}
                 >
-                  {showBearerToken ? (
+                  {showHeaders ? (
                     <ChevronDown className="w-4 h-4 mr-2" />
                   ) : (
                     <ChevronRight className="w-4 h-4 mr-2" />
                   )}
-                  Authentication
+                  Headers
                 </Button>
-                {showBearerToken && (
+                {showHeaders && (
                   <div className="space-y-2">
                     <label className="text-sm font-medium">Header Name</label>
                     <Input
@@ -204,16 +204,16 @@ const Sidebar = ({
                     />
                     <label
                       className="text-sm font-medium"
-                      htmlFor="bearer-token-input"
+                      htmlFor="header-value-input"
                     >
-                      Bearer Token
+                      Header Value
                     </label>
                     <Input
-                      id="bearer-token-input"
-                      placeholder="Bearer Token"
+                      id="header-value-input"
+                      placeholder="Header Value"
                       value={bearerToken}
                       onChange={(e) => setBearerToken(e.target.value)}
-                      data-testid="bearer-token-input"
+                      data-testid="header-value-input"
                       className="font-mono"
                       type="password"
                     />

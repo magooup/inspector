@@ -18,7 +18,8 @@ import express from "express";
 import { findActualExecutable } from "spawn-rx";
 import mcpProxy from "./mcpProxy.js";
 
-const SSE_HEADERS_PASSTHROUGH = ["authorization"];
+// 替换为一个空的数组，后面会动态添加所有headers
+const SSE_HEADERS_PASSTHROUGH: string[] = [];
 
 const defaultEnvironment = {
   ...getDefaultEnvironment(),
@@ -41,6 +42,9 @@ let webAppTransports: SSEServerTransport[] = [];
 const createTransport = async (req: express.Request): Promise<Transport> => {
   const query = req.query;
   console.log("Query parameters:", query);
+
+  // 记录所有请求头
+  console.log("Request headers:", req.headers);
 
   const transportType = query.transportType as string;
 
@@ -67,33 +71,49 @@ const createTransport = async (req: express.Request): Promise<Transport> => {
     return transport;
   } else if (transportType === "sse") {
     const url = query.url as string;
+    // 打印完整的URL路径
+    console.log(`SSE transport: Full URL=${url}`);
+    
     const headers: HeadersInit = {
       Accept: "text/event-stream",
     };
 
-    for (const key of SSE_HEADERS_PASSTHROUGH) {
+    // 获取所有请求头，而不仅仅是authorization
+    Object.keys(req.headers).forEach(key => {
       if (req.headers[key] === undefined) {
-        continue;
+        return;
       }
 
       const value = req.headers[key];
       headers[key] = Array.isArray(value) ? value[value.length - 1] : value;
-    }
-
-    console.log(`SSE transport: url=${url}, headers=${Object.keys(headers)}`);
-
-    const transport = new SSEClientTransport(new URL(url), {
-      eventSourceInit: {
-        fetch: (url, init) => fetch(url, { ...init, headers }),
-      },
-      requestInit: {
-        headers,
-      },
+      // 将这个头添加到SSE_HEADERS_PASSTHROUGH中，以便后续请求也能传递
+      if (!SSE_HEADERS_PASSTHROUGH.includes(key)) {
+        SSE_HEADERS_PASSTHROUGH.push(key);
+      }
     });
-    await transport.start();
 
-    console.log("Connected to SSE transport");
-    return transport;
+    console.log(`SSE transport: url=${url}, headers=${JSON.stringify(headers, null, 2)}`);
+
+    try {
+      const fullUrl = new URL(url);
+      console.log(`SSE transport: Connecting to endpoint: ${fullUrl.toString()}`);
+      
+      const transport = new SSEClientTransport(fullUrl, {
+        eventSourceInit: {
+          fetch: (url, init) => fetch(url, { ...init, headers }),
+        },
+        requestInit: {
+          headers,
+        },
+      });
+      await transport.start();
+
+      console.log("Connected to SSE transport successfully");
+      return transport;
+    } catch (error) {
+      console.error(`Failed to connect to SSE endpoint: ${url}`, error);
+      throw error;
+    }
   } else {
     console.error(`Invalid transport type: ${transportType}`);
     throw new Error("Invalid transport type specified");
