@@ -65,6 +65,10 @@ COPY --from=builder /app/cli/build ./cli/build
 COPY --from=builder /app/client/dist ./client/dist
 COPY --from=builder /app/client/bin ./client/bin
 
+# 复制入口点脚本
+COPY entrypoint.sh /app/entrypoint.sh
+RUN chmod +x /app/entrypoint.sh
+
 # 设置环境变量
 ENV NODE_ENV=production
 ENV CLIENT_PORT=6274
@@ -77,5 +81,5 @@ EXPOSE 6274 6277
 HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
   CMD wget --no-verbose --tries=1 --spider http://localhost:6277/health || exit 1
 
-# 启动命令 - 使用npm start替代直接调用脚本
-CMD ["npm", "start"]
+# 启动命令 - 使用入口点脚本
+CMD ["/app/entrypoint.sh"]

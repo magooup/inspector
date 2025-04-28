@@ -22,6 +22,9 @@ services:
       timeout: 10s
       retries: 3
       start_period: 5s
+    # 自定义启动命令，同时启动服务器和客户端
+    command: >
+      /bin/sh -c "node /app/server/build/index.js & sleep 2 && node /app/client/bin/client.js & wait"
 
 volumes:
   mcp-inspector-data: 

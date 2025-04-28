@@ -30,4 +30,13 @@ README-docker.md
 # 临时文件
 *.bak
 *.tmp
-.DS_Store 
+.DS_Store
+
+# 建议忽略的文件和目录
+node_modules
+npm-debug.log
+*.log
+.git
+
+# 确保不忽略重要文件
+!entrypoint.sh 
