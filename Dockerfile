@@ -1,11 +1,6 @@
 # 使用官方 Node.js 镜像
 FROM node:18 as builder
 
-# 切换到阿里源
-RUN sed -i 's|http://deb.debian.org|https://mirrors.aliyun.com|g' /etc/apt/sources.list \
-    && apt update \
-    && apt install -y curl
-
 # 设置工作目录
 WORKDIR /app
 
@@ -40,6 +35,14 @@ RUN cd server && npm run build && \
 
 # 构建运行阶段容器
 FROM node:18-slim
+
+# 设置阿里云镜像源
+RUN apt-get update && \
+    apt-get install -y apt-transport-https ca-certificates && \
+    echo "deb https://mirrors.aliyun.com/debian/ bullseye main non-free contrib" > /etc/apt/sources.list && \
+    echo "deb https://mirrors.aliyun.com/debian-security bullseye-security main" >> /etc/apt/sources.list && \
+    echo "deb https://mirrors.aliyun.com/debian/ bullseye-updates main non-free contrib" >> /etc/apt/sources.list && \
+    echo "deb https://mirrors.aliyun.com/debian/ bullseye-backports main non-free contrib" >> /etc/apt/sources.list
 
 WORKDIR /app
 
