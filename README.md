@@ -168,6 +168,20 @@ npx @modelcontextprotocol/inspector --cli https://my-mcp-server.example.com --me
 | **Automation**           | N/A                                                                       | Ideal for CI/CD pipelines, batch processing, and integration with coding assistants                                                                  |
 | **Learning MCP**         | Rich visual interface helps new users understand server capabilities      | Simplified commands for focused learning of specific endpoints                                                                                       |
 
+## Docker 运行方式
+
+我们提供了Docker容器方式运行MCP Inspector，方便在各种环境中部署和使用。
+
+```bash
+# 使用提供的快速启动脚本（包含代理配置选项）
+./docker-start.sh
+
+# 或者直接使用docker-compose
+docker-compose up -d
+```
+
+更多关于Docker运行方式的详细说明，请参阅[Docker使用说明](README-docker.md)。
+
 ## License
 
 This project is licensed under the MIT License—see the [LICENSE](LICENSE) file for details.

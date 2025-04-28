@@ -1,0 +1,33 @@
+# 版本控制
+.git
+.github
+.gitignore
+.gitattributes
+
+# 构建输出
+client/dist
+server/build
+cli/build
+node_modules
+*/node_modules
+
+# Docker相关
+Dockerfile
+docker-compose.yml
+.dockerignore
+docker-start.sh
+docker-stop.sh
+README-docker.md
+
+# 开发环境和编辑器配置
+.vscode
+.idea
+.cursor
+*.log
+*.swp
+*.swo
+
+# 临时文件
+*.bak
+*.tmp
+.DS_Store 

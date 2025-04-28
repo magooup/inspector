@@ -1,0 +1,33 @@
+version: '3.8'
+
+services:
+  mcp-inspector:
+    build: 
+      context: .
+      dockerfile: Dockerfile
+    container_name: mcp-inspector
+    restart: unless-stopped
+    ports:
+      - "6274:6274"  # 客户端UI端口
+      - "6277:6277"  # MCP代理服务器端口
+    environment:
+      - NODE_ENV=production
+      - CLIENT_PORT=6274
+      - SERVER_PORT=6277
+    # 如果需要代理配置，可以在这里设置
+    # 可以取消注释以下行，并设置适当的代理
+    # - https_proxy=http://host.docker.internal:7890
+    # - http_proxy=http://host.docker.internal:7890
+    # - all_proxy=socks5://host.docker.internal:7890
+    volumes:
+      # 可选：为了持久化配置
+      - mcp-inspector-data:/app/.config
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:6277/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 5s
+
+volumes:
+  mcp-inspector-data: 
