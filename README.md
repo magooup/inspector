@@ -173,7 +173,7 @@ npx @modelcontextprotocol/inspector --cli https://my-mcp-server.example.com --me
 我们提供了Docker容器方式运行MCP Inspector，方便在各种环境中部署和使用。
 
 ```bash
-# 使用提供的快速启动脚本（包含代理配置选项）
+# 使用提供的快速启动脚本
 ./docker-start.sh
 
 # 或者直接使用docker-compose

@@ -14,11 +14,6 @@ services:
       - NODE_ENV=production
       - CLIENT_PORT=6274
       - SERVER_PORT=6277
-    # 如果需要代理配置，可以在这里设置
-    # 可以取消注释以下行，并设置适当的代理
-    # - https_proxy=http://host.docker.internal:7890
-    # - http_proxy=http://host.docker.internal:7890
-    # - all_proxy=socks5://host.docker.internal:7890
     volumes:
       # 可选：为了持久化配置
       - mcp-inspector-data:/app/.config

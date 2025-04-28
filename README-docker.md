@@ -45,39 +45,6 @@ docker rm mcp-inspector
 - MCP Inspector UI：http://localhost:6274
 - MCP Proxy健康检查：http://localhost:6277/health
 
-## 配置代理（如需要）
-
-如果您需要使用代理来访问外部资源，可以通过以下方式配置：
-
-### 使用docker-compose
-
-编辑`docker-compose.yml`文件，取消注释以下环境变量并设置您的代理地址：
-
-```yaml
-environment:
-  - https_proxy=http://host.docker.internal:7890
-  - http_proxy=http://host.docker.internal:7890
-  - all_proxy=socks5://host.docker.internal:7890
-```
-
-然后重新启动服务：
-
-```bash
-docker-compose down
-docker-compose up -d
-```
-
-### 使用Docker命令
-
-```bash
-docker run -d --name mcp-inspector \
-  -p 6274:6274 -p 6277:6277 \
-  -e https_proxy=http://host.docker.internal:7890 \
-  -e http_proxy=http://host.docker.internal:7890 \
-  -e all_proxy=socks5://host.docker.internal:7890 \
-  mcp-inspector
-```
-
 ## 测试MCP服务器
 
 一旦MCP Inspector启动，您可以通过在浏览器访问UI界面（http://localhost:6274）来测试您的MCP服务器。
@@ -93,5 +60,4 @@ docker-compose down -v
 ## 注意事项
 
 1. 默认端口是6274（UI界面）和6277（MCP代理服务器）。如需修改，请编辑docker-compose.yml或使用Docker命令时指定不同的端口映射。
-2. 在实际部署中，应确保这些端口没有暴露给不信任的网络环境。
-3. 在容器内运行时，需要使用`host.docker.internal`来访问宿主机网络上的服务。 
+2. 在实际部署中，应确保这些端口没有暴露给不信任的网络环境。 
