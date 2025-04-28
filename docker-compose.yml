@@ -2,7 +2,7 @@ version: '3.8'
 
 services:
   mcp-inspector:
-    build: 
+    build:
       context: .
       dockerfile: Dockerfile
     container_name: mcp-inspector
@@ -15,7 +15,6 @@ services:
       - CLIENT_PORT=6274
       - SERVER_PORT=6277
     volumes:
-      # 可选：为了持久化配置
       - mcp-inspector-data:/app/.config
     healthcheck:
       test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:6277/health"]

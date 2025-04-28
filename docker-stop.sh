@@ -6,6 +6,8 @@ YELLOW='\033[1;33m'
 RED='\033[0;31m'
 NC='\033[0m' # 无颜色
 
+echo -e "${GREEN}==== 停止MCP Inspector Docker服务 ====${NC}"
+
 # 确定使用哪种docker-compose命令
 if command -v docker-compose &> /dev/null; then
     COMPOSE_CMD="docker-compose"
@@ -15,6 +17,13 @@ fi
 
 echo -e "${YELLOW}正在停止MCP Inspector服务...${NC}"
 $COMPOSE_CMD down
+
+# 检查停止状态
+if [ $? -ne 0 ]; then
+    echo -e "${RED}服务停止失败，尝试直接停止容器${NC}"
+    docker stop mcp-inspector
+    docker rm mcp-inspector
+fi
 
 echo -e "${GREEN}MCP Inspector服务已停止${NC}"
 
