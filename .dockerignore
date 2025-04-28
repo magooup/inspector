@@ -5,7 +5,6 @@
 .gitattributes
 
 # 构建输出
-client/dist
 server/build
 cli/build
 node_modules
@@ -39,4 +38,5 @@ npm-debug.log
 .git
 
 # 确保不忽略重要文件
-!entrypoint.sh 
+!entrypoint.sh
+!client/dist 

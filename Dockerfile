@@ -1,4 +1,5 @@
-# 使用官方 Node.js 镜像
+# 这是一个两阶段构建的Dockerfile
+# 阶段1: 构建阶段 - 使用完整Node.js镜像
 FROM node:18 as builder
 
 # 设置工作目录
@@ -24,16 +25,11 @@ RUN npm install --omit=optional
 # 复制源代码
 COPY . .
 
-# 为客户端创建必要的目录结构
-RUN mkdir -p client/dist/assets && \
-    cp -r client/public/* client/dist/ || true && \
-    echo "{}" > client/dist/package.json
-
-# 仅构建服务器和CLI组件
+# 仅构建服务器和CLI组件，客户端已在本地构建
 RUN cd server && npm run build && \
     cd ../cli && npm run build
 
-# 构建运行阶段容器
+# 阶段2: 运行阶段 - 使用slim镜像减小大小
 FROM node:18-slim
 
 # 设置阿里云镜像源（使用HTTP协议）
@@ -62,12 +58,9 @@ RUN npm ci --omit=dev --ignore-scripts --omit=optional
 # 复制构建好的文件
 COPY --from=builder /app/server/build ./server/build
 COPY --from=builder /app/cli/build ./cli/build
-COPY --from=builder /app/client/dist ./client/dist
+# 直接复制本地构建好的客户端UI文件
+COPY client/dist ./client/dist
 COPY --from=builder /app/client/bin ./client/bin
-
-# 复制入口点脚本
-COPY entrypoint.sh /app/entrypoint.sh
-RUN chmod +x /app/entrypoint.sh
 
 # 设置环境变量
 ENV NODE_ENV=production
@@ -81,5 +74,5 @@ EXPOSE 6274 6277
 HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
   CMD wget --no-verbose --tries=1 --spider http://localhost:6277/health || exit 1
 
-# 启动命令 - 使用入口点脚本
-CMD ["/app/entrypoint.sh"]
+# 启动命令
+CMD ["node", "/app/server/build/index.js"]
