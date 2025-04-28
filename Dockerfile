@@ -1,6 +1,11 @@
 # 使用官方 Node.js 镜像
 FROM node:18 as builder
 
+# 切换到阿里源
+RUN sed -i 's|http://deb.debian.org|https://mirrors.aliyun.com|g' /etc/apt/sources.list \
+    && apt update \
+    && apt install -y curl
+
 # 设置工作目录
 WORKDIR /app
 
