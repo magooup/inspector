@@ -77,5 +77,5 @@ EXPOSE 6274 6277
 HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
   CMD wget --no-verbose --tries=1 --spider http://localhost:6277/health || exit 1
 
-# 启动命令
-CMD ["node", "server/build/index.js"]
+# 启动命令 - 使用npm start替代直接调用脚本
+CMD ["npm", "start"]
