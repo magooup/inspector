@@ -36,16 +36,17 @@ RUN cd server && npm run build && \
 # 构建运行阶段容器
 FROM node:18-slim
 
-# 设置阿里云镜像源
-RUN echo "deb https://mirrors.aliyun.com/debian/ bullseye main non-free contrib" > /etc/apt/sources.list && \
-    echo "deb https://mirrors.aliyun.com/debian-security bullseye-security main" >> /etc/apt/sources.list && \
-    echo "deb https://mirrors.aliyun.com/debian/ bullseye-updates main non-free contrib" >> /etc/apt/sources.list && \
-    echo "deb https://mirrors.aliyun.com/debian/ bullseye-backports main non-free contrib" >> /etc/apt/sources.list
+# 设置阿里云镜像源（使用HTTP协议）
+RUN echo "deb http://mirrors.aliyun.com/debian/ bullseye main non-free contrib" > /etc/apt/sources.list && \
+    echo "deb http://mirrors.aliyun.com/debian-security bullseye-security main" >> /etc/apt/sources.list && \
+    echo "deb http://mirrors.aliyun.com/debian/ bullseye-updates main non-free contrib" >> /etc/apt/sources.list && \
+    echo "deb http://mirrors.aliyun.com/debian/ bullseye-backports main non-free contrib" >> /etc/apt/sources.list
 
 WORKDIR /app
 
-# 安装运行时所需的工具
-RUN apt-get update && apt-get install -y --no-install-recommends wget && \
+# 安装运行时所需的工具（添加--allow-insecure-repositories选项）
+RUN apt-get -o Acquire::AllowInsecureRepositories=true update && \
+    apt-get -o Acquire::AllowInsecureRepositories=true install -y --no-install-recommends wget && \
     apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # 复制package.json文件
