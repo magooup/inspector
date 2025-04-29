@@ -6,6 +6,51 @@ import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { getDataType, tryParseJson } from "@/utils/jsonUtils";
 
+// 添加一个安全的复制到剪贴板函数
+function copyToClipboard(text: string): Promise<boolean> {
+  // 优先使用 navigator.clipboard API
+  if (navigator?.clipboard?.writeText) {
+    return navigator.clipboard.writeText(text)
+      .then(() => true)
+      .catch(() => {
+        // 如果失败，尝试使用传统的document.execCommand方法
+        return fallbackCopyToClipboard(text);
+      });
+  }
+  
+  // 降级方案
+  return fallbackCopyToClipboard(text);
+}
+
+// 降级复制方法
+function fallbackCopyToClipboard(text: string): Promise<boolean> {
+  return new Promise((resolve) => {
+    try {
+      // 创建临时文本区域
+      const textArea = document.createElement("textarea");
+      textArea.value = text;
+      
+      // 避免滚动到底部
+      textArea.style.top = "0";
+      textArea.style.left = "0";
+      textArea.style.position = "fixed";
+      textArea.style.opacity = "0";
+      
+      document.body.appendChild(textArea);
+      textArea.focus();
+      textArea.select();
+      
+      // 执行复制命令
+      const successful = document.execCommand("copy");
+      document.body.removeChild(textArea);
+      resolve(successful);
+    } catch (err) {
+      console.error("回退复制方法失败", err);
+      resolve(false);
+    }
+  });
+}
+
 interface JsonViewProps {
   data: unknown;
   name?: string;
@@ -51,16 +96,29 @@ const JsonView = memo(
 
     const handleCopy = useCallback(() => {
       try {
-        navigator.clipboard.writeText(
-          typeof normalizedData === "string"
-            ? normalizedData
-            : JSON.stringify(normalizedData, null, 2),
-        );
-        setCopied(true);
+        const textToCopy = typeof normalizedData === "string"
+          ? normalizedData
+          : JSON.stringify(normalizedData, null, 2);
+        
+        copyToClipboard(textToCopy)
+          .then((success) => {
+            if (success) {
+              setCopied(true);
+            } else {
+              throw new Error("复制操作失败");
+            }
+          })
+          .catch((error) => {
+            toast({
+              title: "Error",
+              description: `There was an error copying result into the clipboard: ${error instanceof Error ? error.message : String(error)}`,
+              variant: "destructive",
+            });
+          });
       } catch (error) {
         toast({
           title: "Error",
-          description: `There was an error coping result into the clipboard: ${error instanceof Error ? error.message : String(error)}`,
+          description: `There was an error copying result into the clipboard: ${error instanceof Error ? error.message : String(error)}`,
           variant: "destructive",
         });
       }
