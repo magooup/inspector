@@ -330,7 +330,7 @@ const JsonNode = memo(
                 {name}:
               </span>
             )}
-            <span className={typeStyleMap[dataType] || typeStyleMap.default}>
+            <span className={typeStyleMap[dataType as keyof typeof typeStyleMap] || typeStyleMap.default}>
               {data === null ? "null" : String(data)}
             </span>
           </div>
